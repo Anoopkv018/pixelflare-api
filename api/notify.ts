@@ -1,20 +1,33 @@
+/// <reference types="node" />
 import nodemailer from "nodemailer";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
 
 // --- Helpers ---
-const esc = (s = "") =>
-  String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
-const nl2br = (s = "") => String(s).replace(/\n/g, "<br/>");
+// --- Helpers ---
+const esc = (s: string = ""): string =>
+  String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[c] || c));
+
+const nl2br = (s: string = ""): string =>
+  String(s).replace(/\n/g, "<br>");
+
 
 // --- CORS (allow your Bluehost domain only) ---
 const ALLOW_ORIGIN = process.env.ALLOW_ORIGIN || "*"; // e.g. https://yourdomain.com
 
-function withCORS(res) {
+function withCORS(res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", ALLOW_ORIGIN);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   withCORS(res);
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -44,14 +57,23 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Missing reCAPTCHA token" });
       }
       const resp = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ secret, response: token })
-      });
-      const data = await resp.json();
-      if (!data.success) {
-        return res.status(400).json({ error: "reCAPTCHA failed", details: data });
-      }
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: `secret=${secret}&response=${token}`,
+});
+
+type RecaptchaResponse = {
+  success: boolean;
+  score?: number;
+  "error-codes"?: string[];
+};
+
+const data = (await resp.json()) as RecaptchaResponse;
+
+if (!data.success) {
+  return res.status(400).json({ error: "reCAPTCHA failed", details: data });
+}
+
       // (optional) for v3 check data.score >= 0.5
     }
   } catch (e) {

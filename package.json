@@ -4,6 +4,27 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "nodemailer": "^6.9.10"
-  }
+    "nodemailer": "^6.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/nodemailer": "^7.0.2",
+    "@vercel/node": "^5.4.0"
+  },
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anoopkv018/pixelflare-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Anoopkv018/pixelflare-api/issues"
+  },
+  "homepage": "https://github.com/Anoopkv018/pixelflare-api#readme"
 }
