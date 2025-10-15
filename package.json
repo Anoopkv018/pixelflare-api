@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "formidable": "^3.5.4",
     "nodemailer": "^6.10.1"
   },
   "devDependencies": {
