@@ -74,6 +74,7 @@ if (!data.success) {
   return res.status(400).json({ error: "reCAPTCHA failed", details: data });
 }
 
+
       // (optional) for v3 check data.score >= 0.5
     }
   } catch (e) {
